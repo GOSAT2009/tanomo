@@ -6,3 +6,4 @@ pytz
 python-barcode
 pandas
 plotly
+scikit-learn
