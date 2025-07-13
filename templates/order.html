@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注文ページ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>注文ページ</h1>
+
+        <form action="{{ url_for('order') }}" method="post" id="orderForm">
+            <div class="customer-info">
+                <h2>お客様情報</h2>
+                <div class="form-group">
+                    <label>お名前: <input type="text" name="name" required></label>
+                </div>
+                {% if config and config.require_phone %}
+                <div class="form-group">
+                    <label>電話番号: <input type="tel" name="phone" required></label>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <!--<label>電話番号: <input type="tel" name="phone"></label>
+                </div>
+                {% endif %}
+                {% if config and config.require_grade %}
+                <div class="form-group">-->
+                    <label>学年: <input type="number" name="grade" min="1" max="6" required></label>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label>学年: <input type="number" name="grade" min="1" max="6"></label>
+                </div>
+                {% endif %}
+                {% if config and config.require_class %}
+                <div class="form-group">
+                    <label>組: <input type="number" name="class" min="1" max="10" required></label>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label>組: <input type="number" name="class" min="1" max="10"></label>
+                </div>
+                {% endif %}
+                {% if config and config.require_number %}
+                <div class="form-group">
+                    <label>出席番号: <input type="number" name="number" min="1" max="50" required></label>
+                </div>
+                {% else %}
+                <div class="form-group">
+                    <label>出席番号: <input type="number" name="number" min="1" max="50"></label>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if categories %}
+                {% for category, products in categories.items() %}
+                    <div class="category-section">
+                        <h2>{{ category }}</h2>
+                        {% for product in products %}
+                            <div class="product-order">
+                                <div class="product-info">
+                                    <h3>{{ product.name }}</h3>
+                                    <p class="price">{{ product.price }}円</p>
+                                    <p class="stock">残り {{ product.stock_quantity }}個</p>
+                                </div>
+                                {% if product.image %}
+                                    <img src="{{ url_for('static', filename='uploads/' + product.image) }}" 
+                                         alt="{{ product.name }}" class="product-image-small">
+                                {% endif %}
+                                <div class="quantity-control">
+                                    <label>数量: 
+                                        <input type="number" name="quantity_{{ product.id }}" 
+                                               min="0" max="{{ product.stock_quantity }}" 
+                                               value="0" class="quantity-input" 
+                                               data-price="{{ product.price }}">
+                                    </label>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="total-section">
+                <h2>合計金額: <span id="totalPrice">0</span>円</h2>
+                <input type="hidden" name="total_price" id="totalPriceInput" value="0">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">注文確定</button>
+                <a href="{{ url_for('user_top') }}" class="btn btn-secondary">戻る</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const quantityInputs = document.querySelectorAll('.quantity-input');
+            const totalPriceSpan = document.getElementById('totalPrice');
+            const totalPriceInput = document.getElementById('totalPriceInput');
+
+            function updateTotal() {
+                let total = 0;
+                quantityInputs.forEach(input => {
+                    const quantity = parseInt(input.value) || 0;
+                    const price = parseFloat(input.dataset.price) || 0;
+                    total += quantity * price;
+                });
+                totalPriceSpan.textContent = total;
+                totalPriceInput.value = total;
+            }
+
+            quantityInputs.forEach(input => {
+                input.addEventListener('change', updateTotal);
+                input.addEventListener('input', updateTotal);
+            });
+
+            updateTotal();
+        });
+    </script>
+</body>
+</html>

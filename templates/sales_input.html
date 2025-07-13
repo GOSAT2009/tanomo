@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>販売数入力</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>販売数入力</h1>
+
+        <form method="post" class="sales-form">
+            <div class="form-group">
+                <label>商品: 
+                    <select name="product_id" required>
+                        <option value="">選択してください</option>
+                        {% for product in products %}
+                            <option value="{{ product.id }}">{{ product.name }} ({{ product.category }})</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>日付: <input type="date" name="sale_date" required></label>
+            </div>
+
+            <div class="form-group">
+                <label>販売数: <input type="number" name="quantity_sold" min="0" required></label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">登録</button>
+            </div>
+        </form>
+
+        <div class="sales-records">
+            <h2>販売記録</h2>
+
+            <div class="bulk-delete">
+                <h3>日付別削除</h3>
+                <form method="post" action="{{ url_for('delete_sales_by_date') }}" onsubmit="return confirm('選択した日付の販売記録をすべて削除しますか？')">
+                    <input type="date" name="delete_date" required>
+                    <button type="submit" class="btn btn-danger">削除</button>
+                </form>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>日付</th>
+                        <th>商品名</th>
+                        <th>販売数</th>
+                        <th>登録日時</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in sales_records %}
+                    <tr>
+                        <td>{{ record.sale_date }}</td>
+                        <td>{{ record.product.name }}</td>
+                        <td>{{ record.quantity_sold }}</td>
+                        <td>{{ record.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <a href="{{ url_for('delete_sales_record', record_id=record.id) }}" 
+                               onclick="return confirm('この販売記録を削除しますか？')"
+                               class="btn btn-small btn-danger">削除</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="navigation">
+            <a href="{{ url_for('admin_top') }}" class="btn btn-secondary">管理者トップに戻る</a>
+        </div>
+    </div>
+</body>
+</html>

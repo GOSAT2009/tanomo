@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>販売予測</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>販売予測</h1>
+        
+        {% if graph_json %}
+            <div class="graph-section">
+                <div id="sales-chart"></div>
+            </div>
+        {% endif %}
+        
+        <div class="predictions-section">
+            <h2>販売予測データ</h2>
+            {% if prediction_data %}
+                <div class="predictions-grid">
+                    {% for item in prediction_data %}
+                        <div class="prediction-card">
+                            <h3>{{ item.product.name }}</h3>
+                            <div class="prediction-list">
+                                {% for prediction in item.predictions %}
+                                    <div class="prediction-item">
+                                        <span class="date">{{ prediction.date }}</span>
+                                        <span class="quantity">{{ prediction.predicted_quantity }}個</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>予測データがありません。販売数を入力してください。</p>
+            {% endif %}
+        </div>
+        
+        <div class="navigation">
+            <a href="{{ url_for('sales_input') }}" class="btn btn-primary">販売数入力</a>
+            <a href="{{ url_for('admin_top') }}" class="btn btn-secondary">管理者トップに戻る</a>
+        </div>
+    </div>
+
+    {% if graph_json %}
+        <script>
+            var graphs = {{ graph_json|safe }};
+            Plotly.plot('sales-chart', graphs, {});
+        </script>
+    {% endif %}
+</body>
+</html>

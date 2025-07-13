@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アプリ設定</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>アプリ設定</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="post">
+            <div class="form-section">
+                <h2>必須項目設定</h2>
+                <div class="form-group">
+                    <label>
+                        <!--<input type="checkbox" name="require_phone" {% if config.require_phone %}checked{% endif %}>
+                        <input type="text" name="phone_label" value="{{ config.phone_label or '電話番号' }}" placeholder="項目名">
+                        を必須にする
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>-->
+                        <input type="checkbox" name="require_grade" {% if config.require_grade %}checked{% endif %}>
+                        <input type="text" name="grade_label" value="{{ config.grade_label or '学年' }}" placeholder="項目名">
+                        を必須にする
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="require_class" {% if config.require_class %}checked{% endif %}>
+                        <input type="text" name="class_label" value="{{ config.class_label or '組' }}" placeholder="項目名">
+                        を必須にする
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="require_number" {% if config.require_number %}checked{% endif %}>
+                        <input type="text" name="number_label" value="{{ config.number_label or '出席番号' }}" placeholder="項目名">
+                        を必須にする
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>注文制限設定</h2>
+                <div class="form-group">
+                    <label>
+                        注文金額上限: （いたずら防止）
+                        <input type="number" name="max_order_amount" value="{{ config.max_order_amount }}" min="1" required>
+                        円
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">設定を保存</button>
+                <a href="{{ url_for('admin_top') }}" class="btn btn-secondary">戻る</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

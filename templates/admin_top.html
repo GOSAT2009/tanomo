@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者トップ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>管理者トップページ</h1>
+
+        <div class="stats-section">
+            <h2>本日の売上状況</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>注文数</h3>
+                    <p class="stat-value">{{ today_orders }}</p>
+                </div>
+                <div class="stat-item">
+                    <h3>売上金額</h3>
+                    <p class="stat-value">{{ total_sales }}円</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-section">
+            <h2>管理メニュー</h2>
+            <div class="menu-grid">
+                <a href="{{ url_for('product_register') }}" class="menu-item">
+                    <h3>商品登録・管理</h3>
+                    <p>商品の登録、編集、削除</p>
+                </a>
+                <a href="{{ url_for('order_management') }}" class="menu-item">
+                    <h3>注文管理</h3>
+                    <p>注文一覧、ステータス更新</p>
+                </a>
+                <a href="{{ url_for('sales_input') }}" class="menu-item">
+                    <h3>販売数入力</h3>
+                    <p>実際の販売数を入力</p>
+                </a>
+                <a href="{{ url_for('sales_prediction') }}" class="menu-item">
+                    <h3>販売予測</h3>
+                    <p>販売数の予測とグラフ</p>
+                </a>
+                <a href="{{ url_for('password_change') }}" class="menu-item">
+                    <h3>パスワード変更</h3>
+                    <p>管理者パスワード</p>
+                </a>
+                <a href="{{ url_for('app_config') }}" class="menu-item">
+                    <h3>アプリ設定</h3>
+                    <p>必須項目と注文制限の設定</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <a href="{{ url_for('logout') }}" class="btn btn-secondary">ログアウト</a>
+        </div>
+    </div>
+</body>
+</html>

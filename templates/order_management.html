@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注文管理</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>注文管理</h1>
+        
+        <div class="search-section">
+            <form method="get" class="search-form">
+                <div class="form-group">
+                    <label>日付: <input type="date" name="date" value="{{ search_date }}"></label>
+                </div>
+                <div class="form-group">
+                    <label>注文ID検索: <input type="text" name="search_id" value="{{ search_id }}" placeholder="注文IDを入力"></label>
+                </div>
+                <button type="submit" class="btn btn-primary">検索</button>
+                <a href="{{ url_for('export_csv', date=search_date) }}" class="btn btn-secondary">CSV出力</a>
+            </form>
+        </div>
+        
+        <div class="summary-section">
+            <h2>商品別集計</h2>
+            <div class="summary-grid">
+                {% for product_name, count in product_counts.items() %}
+                    <div class="summary-item">
+                        <span class="product-name">{{ product_name }}</span>
+                        <span class="count">{{ count }}個</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="orders-section">
+            <h2>注文一覧 ({{ search_date }})</h2>
+            <div class="orders-list">
+                {% for order in orders %}
+                    <div class="order-card">
+                        <div class="order-header">
+                            <h3>注文ID: {{ order.order_id }}</h3>
+                            <div class="status-badge status-{{ order.status }}">
+                                {% if order.status == 'pending' %}未準備
+                                {% elif order.status == 'ready' %}準備完了
+                                {% elif order.status == 'completed' %}受け渡し完了
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="order-info">
+                            <p><strong>お客様:</strong> {{ order.customer_name }}</p>
+                            {% if order.phone_number %}
+                                <p><strong>電話:</strong> {{ order.phone_number }}</p>
+                            {% endif %}
+                            {% if order.grade %}
+                                <p><strong>学籍:</strong> {{ order.grade }}年{{ order.class_num }}組{{ order.number }}番</p>
+                            {% endif %}
+                            <p><strong>注文時刻:</strong> {{ order.created_at.strftime('%H:%M') }}</p>
+                            <p><strong>合計金額:</strong> {{ order.total_price }}円</p>
+                        </div>
+                        
+                        <div class="order-items">
+                            <h4>注文商品</h4>
+                            {% for item in order.items %}
+                                <div class="order-item">
+                                    <span>{{ item.product.name }}</span>
+                                    <span>{{ item.quantity }}個</span>
+                                    <span>{{ item.quantity * item.price }}円</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="order-actions">
+                            <a href="{{ url_for('update_order_status', order_id=order.id, status='pending') }}" 
+                               class="btn btn-small">未準備</a>
+                            <a href="{{ url_for('update_order_status', order_id=order.id, status='ready') }}" 
+                               class="btn btn-small btn-success">準備完了</a>
+                            <a href="{{ url_for('update_order_status', order_id=order.id, status='completed') }}" 
+                               class="btn btn-small btn-info">受け渡し完了</a>
+                            <a href="{{ url_for('delete_order', order_id=order.id) }}" 
+                               class="btn btn-small btn-danger" 
+                               onclick="return confirm('この注文を削除しますか？')">削除</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <a href="{{ url_for('admin_top') }}" class="btn btn-secondary">管理者トップに戻る</a>
+        </div>
+    </div>
+</body>
+</html>

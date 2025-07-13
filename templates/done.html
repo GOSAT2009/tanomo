@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注文完了</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>注文完了</h1>
+        
+        {% if order %}
+            <div class="order-summary">
+                <h2>注文内容</h2>
+                <div class="order-info">
+                    <p><strong>注文ID:</strong> {{ order.order_id }}</p>
+                    <p><strong>お名前:</strong> {{ order.customer_name }}</p>
+                    {% if order.phone_number %}
+                        <p><strong>電話番号:</strong> {{ order.phone_number }}</p>
+                    {% endif %}
+                    {% if order.grade %}
+                        <p><strong>学年・組・番号:</strong> {{ order.grade }}年{{ order.class_num }}組{{ order.number }}番</p>
+                    {% endif %}
+                    <p><strong>合計金額:</strong> {{ order.total_price }}円</p>
+                </div>
+                
+                <div class="order-items">
+                    <h3>注文商品</h3>
+                    {% for item in order.items %}
+                        <div class="order-item">
+                            <span>{{ item.product.name }}</span>
+                            <span>{{ item.quantity }}個</span>
+                            <span>{{ item.quantity * item.price }}円</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="barcode-section">
+                    <h3>注文ID バーコード</h3>
+                    <img src="{{ url_for('barcode_image', order_id=order.order_id) }}" alt="注文IDバーコード">
+                    <p>受け取り時にこのバーコードをご提示ください。</p>
+                </div>
+            </div>
+        {% endif %}
+        
+        <div class="navigation">
+            <a href="{{ url_for('user_top') }}" class="btn btn-primary">トップページに戻る</a>
+        </div>
+    </div>
+</body>
+</html>

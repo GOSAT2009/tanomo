@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>利用者トップページ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ url_for('static', filename='uploads/tanomorogo_k.png') }}" alt="ロゴ" class="logo">
+            <h1>注文システム</h1>
+        </div>
+        <h1>本日のメニュー</h1>
+
+        {% if categories %}
+            {% for category, products in categories.items() %}
+                <div class="category-section">
+                    <h2>{{ category }}</h2>
+                    <div class="menu-items">
+                        {% for product in products %}
+                            <div class="menu-item">
+                                <div class="product-info">
+                                    <h3>{{ product.name }}</h3>
+                                    <p class="price">{{ product.price }}円</p>
+                                    {% if product.stock_quantity is not none %}
+                                        <p class="stock">残り {{ product.stock_quantity }}個</p>
+                                    {% endif %}
+                                    {% if product.deadline_time %}
+                                        <p class="deadline">注文締切: {{ product.deadline_time.strftime('%H:%M') }}</p>
+                                    {% endif %}
+                                </div>
+                                {% if product.image %}
+                                    <img src="{{ url_for('static', filename='uploads/' + product.image) }}" 
+                                         alt="{{ product.name }}" class="product-image">
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>本日販売予定の商品はありません。</p>
+        {% endif %}
+
+        <div class="navigation">
+            <a href="{{ url_for('order') }}" class="btn btn-primary">注文する</a>
+            <a href="{{ url_for('admin_login') }}" class="btn btn-secondary">管理者ログイン</a>
+        </div>
+    </div>
+</body>
+</html>
