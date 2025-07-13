@@ -5,3 +5,4 @@ Flask-SQLAlchemy
 pytz
 python-barcode
 pandas
+plotly
