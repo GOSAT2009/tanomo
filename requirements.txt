@@ -4,3 +4,4 @@ Jinja2
 Flask-SQLAlchemy
 pytz
 python-barcode
+pandas
